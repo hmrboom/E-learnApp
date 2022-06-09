@@ -13,6 +13,7 @@ import ProfileModifyPhoto from './Components/ProfileModifyComponents/ProfileModi
 import ProfileDelete from './Components/ProfileModifyComponents/ProfileDelete';
 import CourseBrowse from './Components/Courses/CourseBrowse';
 import CoursePage from './Components/Courses/CoursePage';
+import CourseWishList from "./Components/Courses/CourseWishList";
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
@@ -41,6 +42,7 @@ ReactDOM.render(
             <Route path="profile-modify-close" element={<ProfileDelete/>}/>
             <Route path="course-browse" element={<CourseBrowse/>}/>
             <Route path='course-page' element={<CoursePage/>}/>
+            <Route path='user-wishlist' element={<CourseWishList/>}/>
         </Routes>
     </BrowserRouter>,
   document.getElementById('root')

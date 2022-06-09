@@ -77,7 +77,9 @@ function HeaderW() {
 
                     </Nav>
                  <Stack spacing={3} direction='row'>
-                     <img src={cart} style={{ width:25,height:35,paddingTop:10 }} />
+                     <img src={cart} style={{ width:25,height:35,paddingTop:10 }} alt="cart" onClick={()=>{
+
+                     }}/>
                      <Button variant="contained" className="butonHeader" style={{ backgroundColor:'#5a4e8c',fontWeight:'bold',fontSize:14 }} href="/Login">Sign In</Button>
 
                  </Stack>

@@ -18,15 +18,18 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import FacebookIcon from "@mui/icons-material/Facebook";
+import TwitterIcon from "@mui/icons-material/Twitter";
 function CoursePage(props) {
     const location = useLocation();
     const theme = useTheme();
     const [user,setUser] = useState('');
     const isMatch = useMediaQuery(theme.breakpoints.down("md"));
     const [favorite,setFavorite] = useState(false);
-    const [drop,setDrop] = useState(false);
+    const [drop,setDrop] = useState(true);
     const [lessons,setLessons] = useState(0);
     const [module,setModule] = useState([]);
+    const [mod,setMod] = useState([]);
     useEffect( ()=>{
         let getUserReq =   axios.get("https://localhost:44323/user/getUser",
             { params: { id: location.state.UserId } }
@@ -38,6 +41,8 @@ function CoursePage(props) {
             .then(e=>{
                 setUser(e[0].data)
                 setModule(e[1].data)
+                setMod(module)
+                Object.freeze(mod)
             })
 
 
@@ -46,6 +51,7 @@ function CoursePage(props) {
     },[])
     useEffect(()=>{
         let number = 0;
+
         module.Modules?.map(e=>{
            number = number+e.LessonNumber
         })
@@ -81,8 +87,9 @@ function CoursePage(props) {
                     <h6>Short Description</h6>
                     <div style={{ fontSize:14,fontWeight:1 }}>Created by {user.FirstName}</div>
                 </div>
-                <div>
-                    <Card sx={{ width:300,height:'auto',marginTop:20,marginLeft:20 }}>
+
+                <div style={{ }}>
+                    <Card  className="cardMain" sx={{ width:300,height:'auto',marginTop:20,marginLeft:20 }}>
                         <CardMedia
                             component="img"
                             height="100"
@@ -126,7 +133,8 @@ function CoursePage(props) {
                             <Button sx={{ fontWeight:'bold',color:'gray' }}>Gift</Button>
                         </CardActions>
                     </Card>
-                </div>
+
+               </div>
             </div>
             <div style={{ display: 'flex',flexDirection:'column',gap:100}}>
                 <Card sx={{ width:650,height:'auto',display:'flex',marginTop:25,marginLeft:10 }}>
@@ -164,29 +172,12 @@ function CoursePage(props) {
                         </Typography>
                         <div>
                             <div style={{ display:'flex' }}>
-                                {
-                                    drop ? (
-                                        <ArrowDropDownIcon style={{ marginTop:2,cursor:'pointer' }} onClick={()=>
-                                        {
-                                            setDrop(!drop)
-                                        }}/>
-                                    ):(
-                                        <ArrowDropUpIcon style={{ marginTop:2,cursor:'pointer' }} onClick={()=>{
-                                            setDrop(!drop)
-                                        }}/>
-                                    )
-
-                                }
 
                                 <div style={{ display:'flex',flexDirection:'column' }}>
-                                    <div style={{ fontSize:18,fontWeight:'bold' }}>{module?.Modules[0].ModuleName}</div>
-                                {
-                                    drop ? (
-                                        <div></div>
-                                    ):(
-                                        <div style={{ display:'flex',paddingLeft:10}}>lectie</div>
-                                    )
-                                }
+                                    <div style={{ fontSize:18,fontWeight:'bold' }}>{
+                                        module.Modules && <Child modules={module.Modules} drop={drop}/>
+                                    }</div>
+
                                 </div>
                             </div>
 
@@ -195,7 +186,92 @@ function CoursePage(props) {
                 </Card>
 
             </div>
+            {
+                isMatch ? (
+                        <div style={{ width:'100%', backgroundColor:'#5a4e8c',height:'auto',paddingTop:'80px' }}>
+                            <div style={{ display:'flex',flexDirection:'column',justifyContent: 'space-between'}}>
+                                <div style={{ display:'flex',flexDirection:'column',paddingLeft:30 }}>
+                                    <h3 style={{color:'white' }}>E-Learn</h3>
+                                    <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat emoteonal de plangem toti</p>
+                                    <div style={{ display:'flex',flexDirection:'row',gap:5 }}>
+                                        <FacebookIcon className="icons"/>
+                                        <TwitterIcon className="icons"/>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    ):
+                    (
+                        <div style={{ width:'100%', backgroundColor:'#5a4e8c',height:'auto',paddingTop:'80px' }}>
+                            <div style={{ display:'flex',flexDirection:'row',justifyContent: 'space-between'}}>
+                                <div style={{ display:'flex',flexDirection:'column',paddingLeft:30 }}>
+                                    <h3 style={{color:'white' }}>E-Learn</h3>
+                                    <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat emoteonal de plangem toti</p>
+                                    <div style={{ display:'flex',flexDirection:'row',gap:5 }}>
+                                        <FacebookIcon className="icons"/>
+                                        <TwitterIcon className="icons"/>
+                                    </div>
+
+                                </div>
+                                <div style={{ display:'flex', flexDirection:'column',gap:10 }}>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>About</a>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>Communication</a>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>Contact</a>
+                                </div>
+                                <div style={{ display:'flex', flexDirection:'column',gap:10,paddingRight:30 }}>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>My Account</a>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>Sign In</a>
+                                    <a href="/Home" style={{ color:'#b8b1d6',fontWeight:300 }}>Sign Out</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    )
+            }
         </div>
+    );
+}
+function Child({ modules }) {
+    const [drop,setDrop] = useState(true);
+
+
+    return (
+        <>
+            {modules.map(item => {
+                return(<div style={{ display:'flex' }}>
+                        {
+                            drop ? (
+                                <ArrowDropDownIcon style={{ marginTop:2,cursor:'pointer' }} onClick={()=>
+                                {
+                                    setDrop(!drop)
+                                }}/>
+                            ):(
+                                <ArrowDropUpIcon style={{ marginTop:2,cursor:'pointer' }} onClick={()=>{
+                                    setDrop(!drop)
+                                }}/>
+                            )
+
+                        }
+                        <div style={{ display:'flex',flexDirection:'column' }}>
+                       <div key={item.Id}>{item.ModuleName}</div>
+                           {
+                               drop ? (
+                                   <div></div>
+                               ):(
+
+                                   item.Lessons.map(l=>{
+                                          return <li style={{ fontSize:16,fontWeight:'normal' }}>{l.LessonName}</li>
+                                       })
+                               )
+                           }
+                       </div>
+                    </div>
+                   )}
+            )}
+
+        </>
     );
 }
 

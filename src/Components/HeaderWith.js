@@ -7,9 +7,11 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import Stack from "@mui/material/Stack";
 import cart from "../Consumables/shopping-cart.png";
+import {useNavigate} from "react-router-dom";
 function HeaderWith({name,shoppingCartNumber}) {
     const [categories,setcategories] = useState([]);
     const [show, setShow] = useState(false);
+    const navigate = useNavigate();
     const showDropdown = (e)=>{
         setShow(!show);
     }
@@ -76,7 +78,9 @@ function HeaderWith({name,shoppingCartNumber}) {
 
                         </Nav>
                         <Stack spacing={3} direction='row'>
-                            <img src={cart} style={{ width:25,height:35,paddingTop:10 }} />
+                            <img src={cart} style={{ width:25,height:35,paddingTop:10,cursor:'pointer' }} alt="cart" onClick={()=>{
+                                navigate('/user-wishlist');
+                            }}/>
                             <Button variant="contained" className="butonHeader" style={{ backgroundColor:'#5a4e8c',fontWeight:'bold',fontSize:14 }} href="/Login">Log Out</Button>
 
                         </Stack>
