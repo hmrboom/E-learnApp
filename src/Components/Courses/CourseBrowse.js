@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeaderW from "../HeaderW";
+import HeaderWith from "../HeaderWith";
 import "../../cssStyle/styleSheet.css";
 import GoogleIcon from "@mui/icons-material/Google";
 import IconButton from "@mui/material/IconButton";
@@ -50,7 +51,7 @@ export default function CourseBrowse() {
   }, []);
   return (
     <div>
-      {isMatch ? <DrawerComponent /> : <HeaderW />}
+      {isMatch ? <DrawerComponent /> : verifyToken()}
 
       <div
         className="background"
@@ -160,4 +161,12 @@ export default function CourseBrowse() {
         </div>
     </div>
   );
+}
+function verifyToken(){
+  let token = localStorage.getItem("token");
+  let tokenS = sessionStorage.getItem("token")
+  if(token == '' || tokenS == ''){ console.log(localStorage.getItem('token'))
+    return <HeaderW/>}
+    else return <HeaderWith/>
+  
 }

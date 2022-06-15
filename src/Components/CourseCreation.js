@@ -14,6 +14,10 @@ import Typography from "@mui/material/Typography";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import {Dropdown, NavDropdown} from "react-bootstrap";
 import axios from "axios";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 // import {ChevronDownIcon } from '@chakra-ui/icons'
 // import {
 //     Menu,
@@ -37,6 +41,19 @@ const style1 = {
     p: 4,
 }
 function CourseCreation(props) {
+    const [age, setAge] = React.useState('');
+
+    const setCategoryClick = (event) => {
+        setCategory(event.target.value);
+        
+     };
+     const setSubCategoryClick = (event) => {
+        setSubcategory(event.target.value);
+        
+     };
+     const setTypeClick = (event)=>{ 
+            setType(event.target.value);     
+     }
     const theme = useTheme();
     const isMatch = useMediaQuery(theme.breakpoints.down('md'));
     const [open, setOpen] = React.useState(false);
@@ -44,9 +61,10 @@ function CourseCreation(props) {
     const handleClose = () => setOpen(false);
 
     const [categories,setcategories] = useState([]);
+    const [subcategory,setSubcategory] = useState('');
     const [categoriestypes,setcategoriestypes] = useState([]);
-    const [category,setCategory] = useState();
-    const [type,setType] = useState();
+    const [category,setCategory] = useState('');
+    const [type,setType] = useState('');
 
     const [user,setUser] = useState();
 
@@ -56,22 +74,32 @@ function CourseCreation(props) {
     const [shortDescription,setShortDescription] = useState();
     const [price,setPrice] = useState();
     const [req,setReq] = useState();
+    
 
     useEffect(() => {
-        axios.get(process.env.REACT_APP_ADRESS + 'api/Course/getCategories')
-            .then(response=>{
-                setcategories(response.data)
+     let catego =   axios.get(process.env.REACT_APP_ADRESS + 'api/Course/getCategories')
+            // .then(response=>{
+            //     setcategories(response.data)
+                
+            // })
+            // .catch(err=>{
+            //     console.log(err)
+            // })
+        
+     let typeCat =   axios.get(process.env.REACT_APP_ADRESS + 'api/Course/getTypeCourse')
+            // .then(response=>{
+            //     setcategoriestypes(response.data)
+            // })
+            // .catch(err=>{
+            //     console.log(err)
+            // })
+            axios.all([catego,typeCat])
+            .then(e=>{
+                setcategories(e[0].data)
+                setcategoriestypes(e[1].data)
+               
             })
-            .catch(err=>{
-                console.log(err)
-            })
-        axios.get(process.env.REACT_APP_ADRESS + 'api/Course/getTypeCourse')
-            .then(response=>{
-                setcategoriestypes(response.data)
-            })
-            .catch(err=>{
-                console.log(err)
-            })
+
         if(sessionStorage.getItem('token'))
         {
             var token = sessionStorage.getItem('token').toString();
@@ -97,37 +125,61 @@ function CourseCreation(props) {
                 <HeaderWith name="AH" shoppingCartNumber={2} />
             )}
             <Container maxWidth="lg">
-                <Box sx={{ bgcolor: '#cff2fc', height: '100vh', borderRadius:15,marginTop:10,marginBottom:10 }}>
+                <Box sx={{ borderStyle:'solid',borderWidth:1,display:'flex', width:'auto',height: 'auto', borderRadius:15,marginTop:10,marginBottom:10,flexDirection:'column' }}>
                     <div style={{ display:'flex',justifyContent: 'center' }}>
                         <Typography variant="h4" component="h1">
                             Course Creation Form (Alpha)
                         </Typography>
                     </div>
-                    <Stack direction="column" spacing={5} sx={{ width: 350 }}>
+                    <Stack direction="column" spacing={5} sx={{ width: 'auto', marginLeft:10,marginRight:10 }}>
 
                         <TextField  id="standard-basic" label="Course Name" variant="standard" onChange={e=>{
                             setCourseName(e.target.value);
+                           
                         }} />
 
-                        <Dropdown>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                Course Category
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-
+                       
+                        <FormControl sx={{ width:200, }}>
+                            <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={category}
+                            label="Category"
+                            defaultValue = ""
+                            onChange={setCategoryClick}
+                           
+                            >
+                            {
+                                categories.map(cat => {
+                                    return(
+                                        <MenuItem value={cat} key={cat.Id}>{cat.CategoryName}</MenuItem>
+                                    )
+                                })
+                            }
+                            </Select>
+                        </FormControl>
+                        <FormControl sx={{ width:200 }}>
+                            <InputLabel id="demo-simple-select-label">SubCategory</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={subcategory}
+                            defaultValue = ""
+                            label="SubCategory"
+                            onChange={setSubCategoryClick}
+                           
+                            >
                                 {
-                                    categories.map(cat => {
-                                            return(
-                                                <Dropdown.Item key={cat.Id} onClick={e =>{
-                                                    setCategory(cat.Id);
-                                                }}>{cat.CategoryName}</Dropdown.Item>
-                                            )
-                                        })
-
-                                }
-                            </Dropdown.Menu>
-                        </Dropdown>
+                                category?.SubCategories?.map(cat => {
+                                    return(
+                                        <MenuItem value={cat} key={cat.Id}>{cat.SubCategoryName}</MenuItem>
+                                    )
+                                })
+                            }
+                           
+                            </Select>
+                        </FormControl>
                         <TextField multiline rows={2} maxRows={3}  id="standard-basic" label="Short Description" variant="standard" onChange={e=>{
                             setShortDescription(e.target.value)
                         }} />
@@ -147,27 +199,27 @@ function CourseCreation(props) {
                                 setModuleNr(e.target.value)
                             }}/>
                         </Stack>
-
-                        <Dropdown>
-                            <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                Course Type
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-
-                                {
-                                    categoriestypes.map(cat => {
-                                        return(
-                                            <Dropdown.Item key={cat.Id} onClick={e =>{
-                                                setType(cat.Id);
-                                            }}>{cat.CourseTypeName}</Dropdown.Item>
-
-                                        )
+                        <FormControl sx={{ width:200 }}>
+                            <InputLabel id="demo-simple-select-label">Course Type</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={type}
+                            defaultValue = ""
+                            label="Course Type"
+                            onChange={setTypeClick}
+                            >
+                                { 
+                                    categoriestypes?.map(type=>{
+                                      return  <MenuItem value={type.Id} key={type.Id}>{type.CourseTypeName}</MenuItem>
                                     })
-
                                 }
-                            </Dropdown.Menu>
-                        </Dropdown>
+                               
+                           
+                            </Select>
+                        </FormControl>
+
+                       
                         <Button onClick={e=>{
                             axios.post(process.env.REACT_APP_ADRESS + 'api/Course/courseCreation',{
                                 courseName: courseName,
@@ -176,14 +228,15 @@ function CourseCreation(props) {
                                 req: req,
                                 price: price,
                                 moduleNumber: moduleNr,
-                                categoryId: category,
+                                categoryId: category.Id,
                                 typeId: type,
                                 userId: user.Id
+                                //TREBUIE SI SUBCATEGORY 
                             })
                                 .then(res =>{
                                     console.log(res)
                                     alert("Curs Creat")
-                                    window.location.href="/start"
+                                   // window.location.href="/start"
                                 })
                                 .catch(err=>{
                                     console.log(err)
