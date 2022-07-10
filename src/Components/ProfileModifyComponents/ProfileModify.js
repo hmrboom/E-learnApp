@@ -32,13 +32,32 @@ function ProfileModify(props) {
     const [email,setEmail]  = useState('');
     const [lastname,setLastname]  = useState('');
     const [firstname,setFirstname]  = useState('');
+    const [user,setUser] = useState('');
+    useEffect(()=>{
+        setTimeout(() => {
+            let ceva
+            if(localStorage.getItem('token')){
+                ceva=parseJwt(localStorage.getItem('token'))
+            }
+            else {
+                ceva=parseJwt(sessionStorage.getItem('token'))
+            }
+            axios.get("https://localhost:44323/user/getUser",
+                { params: { id: ceva.Id } }
+            )
+                .then(e=>{
+                    setUser(e.data)
 
-    useEffect(() => {
-        // Update the document title using the browser API
-        axios.get(process.env.REACT_APP_ADRESS + 'api/user/getUser')
-            .then(e =>{
-            })
-    }, []);
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+
+        }, 1000);
+
+
+
+    },[])
     return (
         <div>
 
@@ -49,8 +68,8 @@ function ProfileModify(props) {
                 <Container maxWidth="lg" style={{ display: 'flex'}}>
                     <div style={{ borderStyle:'solid',borderWidth:1,display:'flex', width:'30vh',height: '90vh', borderRadius:15,marginTop:10,marginBottom:10,flexDirection:'column' }}>
                         <div style={{ display:'flex',flexDirection:'column',marginTop:10,alignItems: 'center'}}>
-                            <Avatar sx={{ width:120,height:120,backgroundColor:'#3e4143',fontSize:50 }}>H</Avatar>
-                            <div style={{ display:'flex',fontSize:23,fontWeight:'bold'}}>nume</div>
+                            <Avatar sx={{ width:120,height:120,backgroundColor:'#3e4143',fontSize:50 }} src={"https://localhost:44323/api/Course/getFileById?file="+user.ProfilePhoto}>H</Avatar>
+                            <div style={{ display:'flex',fontSize:23,fontWeight:'bold'}}>{user.UserName}</div>
 
                         </div>
                         <Stack gap={0.5} style={{ marginTop:20}}>
@@ -133,7 +152,20 @@ function ProfileModify(props) {
                                                 boxShadow: 24, }}>
                                     <div style={{ display:'flex',justifyContent:'center',fontSize:25 }}>Are you sure?</div>                
                                     <div style={{ display:'flex',flexDirection:'row',gap:10,justifyContent:'space-around',marginTop:30 }}>
-                                        <Button variant="contained">Yes</Button>
+                                        <Button variant="contained" onClick={()=>{
+                                            axios.post(process.env.REACT_APP_ADRESS + 'user/updateUser',{
+                                                id:user.Id,
+                                                email:email,
+                                                first_Name:firstname,
+                                                last_Name:lastname,
+                                                phone:phone,
+                                                userName:username
+                                            })
+                                                .then(res=>{
+                                                    alert("Success")
+                                                    console.log(user)
+                                                })
+                                        }}>Yes</Button>
                                         <Button variant="contained" onClick={handleClose}>No</Button>
 
                                     </div>
@@ -149,5 +181,10 @@ function ProfileModify(props) {
         </div>
     );
 }
-
+function parseJwt(token) {
+    if (!token) { return; }
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
+}
 export default ProfileModify;

@@ -14,7 +14,7 @@ import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import {yellow} from "@material-ui/core/colors";
-import stronk from './stronk.png';
+import stronk from './laptop.jpg';
 export default function CourseCard(props) {
     return (
         <div>
@@ -23,7 +23,7 @@ export default function CourseCard(props) {
                     <CardMedia
                         component="img"
                         height="100"
-                        image={stronk}
+                        image={props.image}
                         alt="Course photo"
 
                     />

@@ -18,6 +18,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import {useNavigate} from "react-router-dom";
 // import {ChevronDownIcon } from '@chakra-ui/icons'
 // import {
 //     Menu,
@@ -42,7 +43,7 @@ const style1 = {
 }
 function CourseCreation(props) {
     const [age, setAge] = React.useState('');
-
+    const navigate = useNavigate();
     const setCategoryClick = (event) => {
         setCategory(event.target.value);
         
@@ -124,11 +125,32 @@ function CourseCreation(props) {
             {isMatch ? <DrawerComponentWith/>: (
                 <HeaderWith name="AH" shoppingCartNumber={2} />
             )}
+            <div
+                className="background"
+                style={{
+                    width: "100%",
+                    height: "200px",
+                    display: "flex",
+                    alignItems: "center",
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: 40,
+                        fontWeight: "bold",
+                        color: "white",
+                        display: "flex",
+                        marginLeft: 100,
+                    }}
+                >
+                    Course Creation
+                </div>
+            </div>
             <Container maxWidth="lg">
                 <Box sx={{ borderStyle:'solid',borderWidth:1,display:'flex', width:'auto',height: 'auto', borderRadius:15,marginTop:10,marginBottom:10,flexDirection:'column' }}>
                     <div style={{ display:'flex',justifyContent: 'center' }}>
                         <Typography variant="h4" component="h1">
-                            Course Creation Form (Alpha)
+                            Course Creation Form
                         </Typography>
                     </div>
                     <Stack direction="column" spacing={5} sx={{ width: 'auto', marginLeft:10,marginRight:10 }}>
@@ -236,6 +258,7 @@ function CourseCreation(props) {
                                 .then(res =>{
                                     console.log(res)
                                     alert("Curs Creat")
+                                    window.location.reload();
                                    // window.location.href="/start"
                                 })
                                 .catch(err=>{

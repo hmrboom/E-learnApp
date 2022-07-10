@@ -3,7 +3,7 @@ import '../cssStyle/styleSheet.css';
 import Avatar from '@mui/material/Avatar';
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Stack from "@mui/material/Stack";
 import cart from "../Consumables/shopping-cart.png";
@@ -15,6 +15,32 @@ function HeaderWith({name,shoppingCartNumber}) {
     const showDropdown = (e)=>{
         setShow(!show);
     }
+    const [user,setUser] = useState('')
+    useEffect(()=>{
+        setTimeout(() => {
+            let ceva
+            if(localStorage.getItem('token')){
+                ceva=parseJwt(localStorage.getItem('token'))
+            }
+            else {
+                ceva=parseJwt(sessionStorage.getItem('token'))
+            }
+            axios.get("https://localhost:44323/user/getUser",
+                { params: { id: ceva.Id } }
+            )
+                .then(e=>{
+                    setUser(e.data)
+
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+
+        }, 1000);
+
+
+
+    },[])
     const hideDropdown = e => {
         setShow(false);
     }
@@ -33,7 +59,7 @@ function HeaderWith({name,shoppingCartNumber}) {
             <>
                 <Navbar  variant="dark" className="navbarStyle">
                     <Container style={{ display:'flex', paddingLeft:2 }}>
-                        <Navbar.Brand style={{ fontSize:26, color:'#5a4e8c' }} href="/">E-Learn</Navbar.Brand>
+                        <Navbar.Brand style={{ fontSize:26, color:'#5a4e8c' }} href="/start">E-Learn</Navbar.Brand>
                         <Form className="d-flex">
                             <FormControl
                                 type="search"
@@ -45,7 +71,7 @@ function HeaderWith({name,shoppingCartNumber}) {
                         </Form>
                         <Nav className="me-auto" style={{ paddingLeft:100,gap:15 }}>
 
-                            <Nav.Link  style={{ color:'#5a4e8c' }}> Home </Nav.Link>
+                            <Nav.Link  style={{ color:'#5a4e8c' }} href="/start"> Home </Nav.Link>
 
 
                             <NavDropdown title={
@@ -74,14 +100,29 @@ function HeaderWith({name,shoppingCartNumber}) {
                             </NavDropdown>
                             <Nav.Link  style={{ color:'#5a4e8c' }}> About </Nav.Link>
                             <Nav.Link  style={{ color:'#5a4e8c' }}> Contact </Nav.Link>
-                            <Nav.Link  style={{ color:'#5a4e8c' }} href="profile"> Profile </Nav.Link>
+                            <Nav.Link  style={{ color:'#5a4e8c' }}  onClick={()=>{
+
+                                    navigate('/profile-modify');
+
+                            }}> Profile </Nav.Link>
+                            <Nav.Link  style={{ color:'#5a4e8c' }}  onClick={()=>{
+                                if(localStorage.getItem('token')){
+                                    navigate('/my-courses/'+localStorage.getItem('token'));
+                                }
+                                else  navigate('/my-courses/'+sessionStorage.getItem('token'));
+
+                            }}> My Courses </Nav.Link>
 
                         </Nav>
                         <Stack spacing={3} direction='row'>
+                            <Avatar sx={{ width:35,height:35,backgroundColor:'#3e4143',fontSize:50 }} src={"https://localhost:44323/api/Course/getFileById?file="+user.ProfilePhoto}>H</Avatar>
                             <img src={cart} style={{ width:25,height:35,paddingTop:10,cursor:'pointer' }} alt="cart" onClick={()=>{
                                 navigate('/user-wishlist');
                             }}/>
-                            <Button variant="contained" className="butonHeader" style={{ backgroundColor:'#5a4e8c',fontWeight:'bold',fontSize:14 }} href="/Login">Log Out</Button>
+                            <Button variant="contained" className="butonHeader" style={{ backgroundColor:'#5a4e8c',fontWeight:'bold',fontSize:14 }} href="/Login" onClick={()=>{
+                                localStorage.clear()
+                                sessionStorage.clear()
+                            }}>Log Out</Button>
 
                         </Stack>
 
@@ -145,5 +186,10 @@ function HeaderWith({name,shoppingCartNumber}) {
         </>
     );
 }
-
+function parseJwt(token) {
+    if (!token) { return; }
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
+}
 export default HeaderWith;

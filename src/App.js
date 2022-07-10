@@ -3,7 +3,7 @@ import './cssStyle/styleSheet.css';
 import CourseCard from "./Consumables/CourseCard";
 import HeaderW from "./Components/HeaderW";
 import DrawerComponent from "./Consumables/DrawerComponent";
-import stronk from "./Consumables/startPhoto.jpg";
+import stronk from "./Consumables/laptop.jpg";
 import search from "./Consumables/search.png";
 import React, {useState} from "react";
 import axios from "axios";
@@ -14,6 +14,11 @@ import Slider from "react-slick";
 import {createTheme} from "@material-ui/core";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
+import CourseCardL from "./Consumables/CourseCardL";
+import piton from "./Consumables/piton.png";
+import react from "./Consumables/react.png";
+import node from "./Consumables/node.jpg";
+import js from "./Consumables/js.jpeg";
 function App() {
     var settings = {
         dots: true,
@@ -36,6 +41,7 @@ function App() {
 
     const isMatch = useMediaQuery(theme.breakpoints.down('sm'));
     const [courses,setCourses] = useState()
+    const [coursesNumber,setCoursesNumber] = useState(0)
 
     axios.get(process.env.REACT_APP_ADRESS + 'api/Course/getCourses')
         .then(response=>{
@@ -44,6 +50,8 @@ function App() {
         .catch(err=>{
             console.log(err)
         })
+
+
     return (
         <>
 
@@ -115,7 +123,7 @@ function App() {
                         <div style={{ display: 'flex',height: '550px'}}>
                             <div style={{ backgroundColor:'#5a4e8c' ,width:'50%',color:'white', display:'flex',justifyContent: 'center',alignItems:'center',flexDirection:'column'}}>
                                 <h1> Learn new skills online</h1>
-                                <p> Learn 100% free</p>
+                                <p> </p>
                                 <div style={{ display: 'flex',flexDirection:'row', width:'auto'}}>
                                     <Form.Control
                                         type="text"
@@ -134,7 +142,7 @@ function App() {
                     )
                 }
                 <div style={{ display: 'flex', flexDirection:'column',justifyContent: 'center',alignItems:'center', paddingTop:100 }}>
-                    <h2> Recent cursuri da da </h2>
+                    <h2> Recent courses </h2>
                     {
                         isMatch ? (
                                 <Slider {...settings} style={{ maxWidth:'90%'}}>
@@ -150,11 +158,12 @@ function App() {
                             (
                                 <Slider {...settings} style={{ maxWidth:'90%'}}>
                                     <div>
+                                        {/*<CourseCardL name={enroll.Course.CourseName} userName="TEST" price={enroll.Course.CoursePrice} score={enroll.Course.CourseRating} rating={enroll.Course.CourseRating}/>*/}
+
                                         <div style={{ display:'flex',flexDirection:'row',gap:10}}>
-                                            <div style={{ width:'25%' }}><CourseCard/></div>
-                                            <div style={{ width:'25%' }}><CourseCard/></div>
-                                            <div style={{ width:'25%' }}><CourseCard/></div>
-                                            <div style={{ width:'25%' }}><CourseCard/></div>
+                                            {
+                                                courses && <CoursesMap courses={courses}/>
+                                            }
                                         </div>
                                     </div>
                                     <div>
@@ -175,7 +184,7 @@ function App() {
                                     <div style={{ display:'flex',flexDirection:'column',justifyContent: 'space-between'}}>
                                         <div style={{ display:'flex',flexDirection:'column',paddingLeft:30 }}>
                                             <h3 style={{color:'white' }}>E-Learn</h3>
-                                            <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat emoteonal de plangem toti</p>
+                                            <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat</p>
                                             <div style={{ display:'flex',flexDirection:'row',gap:5 }}>
                                                 <FacebookIcon className="icons"/>
                                                 <TwitterIcon className="icons"/>
@@ -191,7 +200,7 @@ function App() {
                                     <div style={{ display:'flex',flexDirection:'row',justifyContent: 'space-between'}}>
                                         <div style={{ display:'flex',flexDirection:'column',paddingLeft:30 }}>
                                             <h3 style={{color:'white' }}>E-Learn</h3>
-                                            <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat emoteonal de plangem toti</p>
+                                            <p style={{ color:'#b8b1d6',fontWeight:300 }}>Ceva citat</p>
                                             <div style={{ display:'flex',flexDirection:'row',gap:5 }}>
                                                 <FacebookIcon className="icons"/>
                                                 <TwitterIcon className="icons"/>
@@ -220,6 +229,31 @@ function App() {
 
         </>
     );
+}
+function CoursesMap({courses}){
+    let counter = 0
+    let poza
+    return(<>
+        {
+    courses?.map(c => {
+        if (counter != 4) {
+            if(counter == 0)poza=react
+            if(counter == 1)poza=node
+            if(counter == 2)poza=piton
+            if(counter == 3)poza=js
+            counter++
+            return (<div style={{width: '25%'}}>
+                    <CourseCardL key={c.Id} name={c.CourseName} userName="TEST" price={c.CoursePrice}
+                                 score={c.CourseRating} rating={c.CourseRating} image={poza}/>
+                </div>
+            )
+        }
+
+
+    })
+}
+        </>
+    )
 }
 
 export default App;

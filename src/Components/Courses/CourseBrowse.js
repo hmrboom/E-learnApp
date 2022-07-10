@@ -20,7 +20,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import {useNavigate} from "react-router-dom";
-
+import react from "../../Consumables/react.png"
 export default function CourseBrowse() {
   const theme = useTheme();
   const isMatch = useMediaQuery(theme.breakpoints.down("md"));
@@ -70,6 +70,7 @@ export default function CourseBrowse() {
             display: "flex",
             marginLeft: 100,
           }}
+          className="stil"
         >
           Courses
         </div>
@@ -89,19 +90,20 @@ export default function CourseBrowse() {
                 flexDirection:'row'
             }}
           >
-            <div style={{ fontWeight: "bold", fontSize: 18 }}>
+            <div style={{ fontWeight: "bold", fontSize: 18 }} className="stil">
               {cat.CategoryName}
             </div>
               <div style={{ display: "flex",gap:'7%'}}>
               {
                   cat.Courses.map( c =>{
+                      console.log(c)
+                      let imageC = "https://localhost:44323/api/Course/getFileById?file=" + c.CoursePhoto
                       return(
                           <div onClick={()=>{
                               navigate('/course-page',{state:c});
 
-
                           }}>
-                          <CourseCardL name={c.CourseName} userName="TEST" price={c.CoursePrice} score={c.CourseRating} rating={c.CourseRating}>
+                          <CourseCardL name={c.CourseName} userName="TEST" price={c.CoursePrice} score={c.CourseRating} rating={c.CourseRating} image={imageC}>
                           </CourseCardL>
                           </div>
                       )
@@ -111,6 +113,7 @@ export default function CourseBrowse() {
           </div>
         );
       })}
+
         <div style={{ display: 'flex', flexDirection:'column',justifyContent: 'center',alignItems:'center', paddingTop:128 }}>
 
 

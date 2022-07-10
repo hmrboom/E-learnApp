@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import DrawerComponent from "../../Consumables/DrawerComponent";
 import "../../cssStyle/styleSheet.css";
 import HeaderWith from "../HeaderWith";
@@ -21,15 +21,18 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
 function CoursePage(props) {
+    const navigate = useNavigate();
     const location = useLocation();
     const theme = useTheme();
     const [user,setUser] = useState('');
+    const [currentuser,setCurrentUser] = useState('');
     const isMatch = useMediaQuery(theme.breakpoints.down("md"));
     const [favorite,setFavorite] = useState(false);
     const [drop,setDrop] = useState(true);
     const [lessons,setLessons] = useState(0);
     const [module,setModule] = useState([]);
     const [mod,setMod] = useState([]);
+    const [added,setAdded] = useState(false);
     useEffect( ()=>{
         let getUserReq =   axios.get("https://localhost:44323/user/getUser",
             { params: { id: location.state.UserId } }
@@ -57,6 +60,40 @@ function CoursePage(props) {
         })
         setLessons(number)
     },[module])
+    function parseJwt(token) {
+        if (!token) { return; }
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace('-', '+').replace('_', '/');
+        return JSON.parse(window.atob(base64));
+    }
+    useEffect(()=>{
+        setTimeout(() => {
+
+            if(localStorage.getItem('token')){
+                setCurrentUser(parseJwt(localStorage.getItem('token')))
+            }
+            else {
+                setCurrentUser(parseJwt(sessionStorage.getItem('token')));
+            }
+
+
+        }, 1000);
+
+
+
+    },[])
+    const addToCard = ()=>{
+        axios.post('https://localhost:44323/api/Course/goToWishlist', {
+                userId:currentuser.Id,
+                courseId:location.state.Id
+                })
+            .then(res =>{
+                console.log(currentuser)
+                alert('added to cart')
+                console.log(res)
+                setAdded(true);
+            })
+    }
     return (
         <div>
 
@@ -85,7 +122,7 @@ function CoursePage(props) {
                 >
                     {location.state.CourseName}
                     <h6>Short Description</h6>
-                    <div style={{ fontSize:14,fontWeight:1 }}>Created by {user.FirstName}</div>
+                    <div style={{ fontSize:14,fontWeight:1 }}>Created by {user.LastName} {user.FirstName} </div>
                 </div>
 
                 <div style={{ }}>
@@ -93,10 +130,11 @@ function CoursePage(props) {
                         <CardMedia
                             component="img"
                             height="100"
-                            image={stronk}
+                            src={"https://localhost:44323/api/Course/getFileById?file="+location.state.CoursePhoto}
                             alt="Course photo"
 
                         />
+
                         <CardContent>
                             <Typography variant="body" color="#595959">
                                 <h2>{location.state.CoursePrice}€</h2>
@@ -113,7 +151,18 @@ function CoursePage(props) {
                             </Typography>
                         </CardContent>
                         <CardActions>
-                            <Button className="buttonCart" size="medium" sx={{ width:180,height:50,color:'white',backgroundColor:'green',fontWeight:'bold' }}>Add to Cart</Button>
+                            {/*{*/}
+                            {/*    added ? (*/}
+                            {/*        <Button className="buttonCart" size="medium" sx={{ width:180,height:50,color:'white',backgroundColor:'green',fontWeight:'bold' }} onClick={()=>{*/}
+
+
+                            {/*        }}>Go to Cart</Button>*/}
+                            {/*    ):(*/}
+                            {/*        <Button className="buttonCart" size="medium" sx={{ width:180,height:50,color:'white',backgroundColor:'green',fontWeight:'bold' }} onClick={addToCard}>Add to Cart</Button>*/}
+                            {/*    )*/}
+                            {/*}*/}
+                            <Button className="buttonCart" size="medium" sx={{ width:180,height:50,color:'white',backgroundColor:'green',fontWeight:'bold' }} onClick={addToCard}>Add to Cart</Button>
+
                             <IconButton aria-label="add to favorites">
                                 {
                                     favorite ? (

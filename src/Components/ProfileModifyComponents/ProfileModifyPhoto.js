@@ -20,19 +20,36 @@ export default function ProfileModifyPhoto() {
     const handleClose = () => setOpen(false);
     const [selectedImage, setSelectedImage] = useState(null);
 
-    const [username,setUsername]  = useState('');
-    const [password,setPassword] = useState('');
-    const [phone,setPhone]  = useState('');
-    const [email,setEmail]  = useState('');
-    const [lastname,setLastname]  = useState('');
-    const [firstname,setFirstname]  = useState('');
+    const [photo,setPhoto]  = useState('');
+    const [user,setUser]  = useState('');
 
-    useEffect(() => {
-        // Update the document title using the browser API
-        axios.get(process.env.REACT_APP_ADRESS + 'api/user/getUser')
-            .then(e =>{
-            })
-    }, []);
+
+    useEffect(()=>{
+        setTimeout(() => {
+            let ceva
+            if(localStorage.getItem('token')){
+                ceva=parseJwt(localStorage.getItem('token'))
+            }
+            else {
+                ceva=parseJwt(sessionStorage.getItem('token'))
+            }
+            axios.get("https://localhost:44323/user/getUser",
+                { params: { id: ceva.Id } }
+            )
+                .then(e=>{
+                    setUser(e.data)
+                    setPhoto(e.data.ProfilePhoto)
+
+                })
+                .catch(err=>{
+                    console.log(err)
+                })
+
+        }, 1000);
+
+
+
+    },[])
     return (
         <div>
 
@@ -43,8 +60,8 @@ export default function ProfileModifyPhoto() {
                 <Container maxWidth="lg" style={{ display: 'flex'}}>
                     <div style={{ borderStyle:'solid',borderWidth:1,display:'flex', width:'30vh',height: '90vh', borderRadius:15,marginTop:10,marginBottom:10,flexDirection:'column' }}>
                         <div style={{ display:'flex',flexDirection:'column',marginTop:10,alignItems: 'center'}}>
-                            <Avatar sx={{ width:120,height:120,backgroundColor:'#3e4143',fontSize:50 }}>H</Avatar>
-                            <div style={{ display:'flex',fontSize:23,fontWeight:'bold'}}>nume</div>
+                            <Avatar sx={{ width:120,height:120,backgroundColor:'#3e4143',fontSize:50 }} src={"https://localhost:44323/api/Course/getFileById?file="+photo}>H</Avatar>
+                            <div style={{ display:'flex',fontSize:23,fontWeight:'bold'}}>{user.UserName}</div>
 
                         </div>
                         <Stack gap={0.5} style={{ marginTop:20}}>
@@ -75,40 +92,33 @@ export default function ProfileModifyPhoto() {
                         <div style={{ display:'flex',justifyContent:'center',marginTop:10, fontSize:32, fontWeight:'bold' }}>
                             Profile Photo
                         </div>
-                        <div style={{ display:'flex',justifyContent:'center',flexDirection:'column',alignItems:'center' }}>
-                            <div>Photo Preview</div>
-                            {selectedImage && (
-                                            <div>
-                                            <img alt="not fount" style={{ width:'80%',height:'80%' }} src={URL.createObjectURL(selectedImage)} />
-                                            <br />
-                                             <div style={{ display:'flex',justifyContent:'space-around' }}>
-                                                <Button onClick={()=>setSelectedImage(null)}>Accept Change</Button>
-                                                <Button onClick={()=>setSelectedImage(null)}>Remove</Button>
-                                             </div>
-                                           
-                                            </div>
-                                        )}
-                             
+                        <input type="file" className="form-control profile-pic-uploader" onChange={e=>{
+                            let ret  = e.target.value; //ssssssssssssssssssssssssssss
+                            ret = ret.replace('C:\\fakepath\\','');
+                            setPhoto(ret)
+                        }} />
+                        <div style={{ display:'flex',justifyContent:'space-around',marginTop:50 }}>
+                            <Button onClick={()=>{
+                                axios.post("https://localhost:44323/user/userPhotoModify",{
+                                    id:user.Id,
+                                    profilePhoto:photo
+                                })
+                                    .then(res=>{
+                                        alert("Success")
+                                    })
+                            }}>Accept Change</Button>
                         </div>
-                      
-                                        <br />
-                                        
-                                        <br /> 
-                                        <input
-                                            
-                                            type="file"
-                                            name="myImage"
-                                            onChange={(event) => {
-                                            console.log(event.target.files[0]);
-                                            setSelectedImage(event.target.files[0]);
-                                            }}
-                                        />
                        
                     </div>
                 </Container>
             </div>
         </div>
     );
-  
-}
 
+}
+function parseJwt(token) {
+    if (!token) { return; }
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace('-', '+').replace('_', '/');
+    return JSON.parse(window.atob(base64));
+}

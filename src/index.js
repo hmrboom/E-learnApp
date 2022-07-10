@@ -14,35 +14,30 @@ import ProfileDelete from './Components/ProfileModifyComponents/ProfileDelete';
 import CourseBrowse from './Components/Courses/CourseBrowse';
 import CoursePage from './Components/Courses/CoursePage';
 import CourseWishList from "./Components/Courses/CourseWishList";
+import CourseLearn from "./Components/Courses/CourseLearn";
+import MyCourses from "./Components/Courses/MyCourses";
+import CourseModify from "./Components/Courses/CourseModify";
+import LessonCreation from "./Components/Courses/LessonCreation";
+
 ReactDOM.render(
     <BrowserRouter>
         <Routes>
             <Route  path="/" element={<App/>}/>
             <Route path="login" element={<Login/>} />
             <Route path="register" element={<Register/>} />
-            {
-                (localStorage.getItem("token") || sessionStorage.getItem("token")) &&
-                <Route path="start" element={<WelcomeBackPage/>}/>
-            }
-
-            {
-                (localStorage.getItem("token") || sessionStorage.getItem("token")) &&
-                <Route path="profile" element={<Profile/>} />
-            }
-            {
-                (localStorage.getItem("token") || sessionStorage.getItem("token")) &&
-                <Route path="courseCreation" element={<CourseCreation/>} />
-            }
-            {/* {
-                (localStorage.getItem("token") || sessionStorage.getItem("token")) &&
-                
-            } */}
-            <Route path="profile-modify" element={<ProfileModify/>} />
+            <Route path="start" element={<WelcomeBackPage/>}/>
+            <Route path="profile" element={<Profile/>} />
+            <Route path="courseCreation" element={<CourseCreation/>} />
+            <Route path="profile-modify/" element={<ProfileModify/>} />
             <Route path="profile-modify-photo" element={<ProfileModifyPhoto/>}/>
             <Route path="profile-modify-close" element={<ProfileDelete/>}/>
             <Route path="course-browse" element={<CourseBrowse/>}/>
             <Route path='course-page' element={<CoursePage/>}/>
             <Route path='user-wishlist' element={<CourseWishList/>}/>
+            <Route path="course-learn/:id" element={<CourseLearn/>} />
+            <Route path="my-courses/:id" element={<MyCourses/>} />
+            <Route path="courseModify/:id" element={<CourseModify/>} />
+            <Route path="lessonCreation" element={<LessonCreation/>} />
         </Routes>
     </BrowserRouter>,
   document.getElementById('root')
